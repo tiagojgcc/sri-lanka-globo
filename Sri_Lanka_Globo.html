@@ -318,7 +318,7 @@ details.nt{margin-top:10px}details.nt summary{cursor:pointer;font-size:13.5px;pa
 <div id="menu" class="panel">
   <button class="mi" id="miLoc" style="display:none"><span>📍</span><div><b>Parar de mostrar a minha localização</b></div></button>
   <button class="mi" id="miOff"><span>⬇️</span><div><b>Mapas offline</b><small>Descarregar para usar sem internet</small></div></button>
-  <button class="mi" id="miGame"><span>🏁</span><div><b>Desafio dos casais</b><small>Perguntas e missões; pontos para cada casal</small></div></button>
+  <button class="mi" id="miGame"><span>❓</span><div><b>Perguntas de curiosidade</b><small>Para entreter no carro; resposta escondida</small></div></button>
   <button class="mi" id="ter"><span>⛰</span><div><b><em style="font-style:normal">Relevo: desligado</em></b><small>Relevo 3D: mais bonito, mas pesa mais</small></div></button>
 </div>
 <div id="dlg"><div class="box panel"><button id="dlgX" aria-label="Fechar">✕</button><h3 id="dlgT"></h3><div id="dlgB"></div></div></div>
@@ -1231,7 +1231,7 @@ function bindCard(id){
   const nt=$('#noteTx');nt.value=localStorage.getItem('sl_note_'+id)||'';
   if(nt.value)nt.closest('details').open=true;
   nt.oninput=()=>localStorage.setItem('sl_note_'+id,nt.value);
-  document.querySelectorAll('#body .tm').forEach(b=>b.onclick=()=>gToggle(b));
+  
 }
 $('#lbDel').onclick=async e=>{
   e.stopPropagation();const c=lbList&&lbList[lbI];if(!c||!c.user)return;
@@ -1269,47 +1269,24 @@ function seasonHTML(name){
 /* ============================================================
    DESAFIO DOS CASAIS (peddy paper simples)
    ============================================================ */
-let G;try{G=JSON.parse(localStorage.getItem('sl_game')||'null');}catch(e){G=null;}
-if(!G||!G.names)G={names:['Casal A','Casal B'],m:{}};
-const gsave=()=>localStorage.setItem('sl_game',JSON.stringify(G));
 function gItems(id){
   const h=HIST[id];if(!h)return [];
-  return (h.quiz||[]).map((x,i)=>({k:id+':q'+i,q:x.q,a:x.a,pts:1,t:'q'}))
-    .concat(h.missao?[{k:id+':m',q:h.missao,pts:2,t:'m'}]:[]);
+  return (h.quiz||[]).map((x,i)=>({q:x.q,a:x.a}));
 }
-const gScore=t=>{let n=0;PLACES.forEach(p=>gItems(p.id).forEach(it=>{if((G.m[it.k]||[])[t])n+=it.pts;}));return n;};
 function chHTML(id){
-  return gItems(id).map(it=>`<div class="ch"><div class="q">${it.t==='q'?'❓':'🎯'} ${esc(it.q)}</div><div class="pts">${it.t==='q'?'Pergunta · 1 ponto':'Missão · 2 pontos'}</div>`
-    +(it.t==='q'?`<details><summary>Ver a resposta</summary>${esc(it.a)}</details>`:'')
-    +`<div class="tms">${[0,1].map(t=>`<button class="tm${(G.m[it.k]||[])[t]?' on':''}" data-k="${it.k}" data-t="${t}">${esc(G.names[t])}</button>`).join('')}</div></div>`).join('');
+  return gItems(id).map(it=>`<div class="ch"><div class="q">❓ ${esc(it.q)}</div><details><summary>Ver a resposta</summary>${esc(it.a)}</details></div>`).join('');
 }
 function gameHTML(id){
   if(!gItems(id).length)return '';
-  return `<div class="sec"><h4>🏁 Desafio deste sítio</h4><div class="sb" id="sbCard"></div>${chHTML(id)}</div>`;
-}
-function sbHTML(){
-  const a=gScore(0),b=gScore(1);
-  return `<div><b>${a}</b><small>${esc(G.names[0])}</small></div><div><b>${b}</b><small>${esc(G.names[1])}</small></div>`;
-}
-function gRefresh(){document.querySelectorAll('.sb').forEach(e=>e.innerHTML=sbHTML());const l=$('#gLead');if(l)l.textContent=leadTxt();}
-function leadTxt(){const a=gScore(0),b=gScore(1);return a===b?(a?'🤝 Empate!':'Ainda ninguém pontuou. Boa sorte!'):`🏆 ${G.names[a>b?0:1]} à frente por ${Math.abs(a-b)} ponto(s)`;}
-function gToggle(btn){
-  const k=btn.dataset.k,t=+btn.dataset.t;G.m[k]=G.m[k]||[false,false];G.m[k][t]=!G.m[k][t];gsave();
-  document.querySelectorAll(`.tm[data-k="${k}"][data-t="${t}"]`).forEach(b=>b.classList.toggle('on',G.m[k][t]));gRefresh();
+  return `<div class="sec"><h4>❓ Pergunta para o caminho</h4>${chHTML(id)}</div>`;
 }
 function openGame(){
   const ids=PLACES.map(p=>p.id).filter(id=>gItems(id).length);
   const cp=cardIdx>=0?PLACES[cardIdx].id:null;
-  let h=`<p>Um jogo simples entre os dois casais. <b>Pergunta certa = 1 ponto, missão cumprida = 2 pontos.</b> Um dos telemóveis faz de árbitro e vai marcando os pontos; as respostas estão escondidas até as quererem ver.</p>
-  <div class="tn"><input id="tn0" value="${esc(G.names[0])}" aria-label="Nome do casal A" maxlength="20"><input id="tn1" value="${esc(G.names[1])}" aria-label="Nome do casal B" maxlength="20"></div>
-  <div class="sb"></div><p id="gLead" style="text-align:center;font-weight:600;color:var(--gold)"></p>`;
-  if(!ids.length)h+='<p>Ainda não há desafios carregados.</p>';
+  let h='<p>Perguntas de curiosidade sobre cada sítio, para entreter no carro. A resposta fica escondida até a quererem ver.</p>';
+  if(!ids.length)h+='<p>Ainda não há perguntas carregadas.</p>';
   ids.forEach(id=>{const p=PLACES.find(q=>q.id===id);h+=`<details class="stp"${id===cp?' open':''}><summary>${esc(p.name)}</summary>${chHTML(id)}</details>`;});
-  h+='<button class="bigbtn sec2" id="gReset">Repor pontuação</button>';
-  openDlg('🏁 Desafio dos casais',h);gRefresh();
-  ['tn0','tn1'].forEach((i,t)=>$('#'+i).oninput=e=>{G.names[t]=e.target.value||('Casal '+'AB'[t]);gsave();document.querySelectorAll('.tm[data-t="'+t+'"]').forEach(b=>b.textContent=G.names[t]);gRefresh();});
-  document.querySelectorAll('#dlgB .tm').forEach(b=>b.onclick=()=>gToggle(b));
-  $('#gReset').onclick=()=>{if(!confirm('Repor toda a pontuação?'))return;G.m={};gsave();openGame();};
+  openDlg('❓ Perguntas de curiosidade',h);
 }
 $('#miGame').onclick=openGame;
 
