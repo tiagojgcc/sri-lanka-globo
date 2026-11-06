@@ -4,6 +4,11 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
 <title>Sri Lanka 2026 · A nossa viagem no globo</title>
+<meta name="description" content="A nossa viagem ao Sri Lanka (29 nov – 13 dez 2026) num globo 3D interativo: rota, fotos, pratos, animais e cidades.">
+<meta name="theme-color" content="#02030a">
+<meta property="og:title" content="Sri Lanka 2026 · A nossa viagem no globo">
+<meta property="og:description" content="Globo 3D interativo com a rota, as paragens, fotos, pratos e animais.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🌏%3C/text%3E%3C/svg%3E">
 <link rel="stylesheet" href="libs/maplibre-gl.css">
 <style>
 :root{--gold:#ffc766;--ink:#0b1220;--glass:rgba(12,18,32,.78);--line:rgba(255,255,255,.14);--txt:#eef2f8;--dim:#a9b4c7}
@@ -63,7 +68,7 @@ body.ready .hud{opacity:1;pointer-events:auto}
 .tick.base span{color:#dfe6f2;font-weight:600}
 .tick.on span{color:var(--gold)}
 .tick .dt{top:41px;font-size:9px;opacity:.75}
-#now{margin-top:4px;text-align:center;font-size:14px;color:#dfe6f2}#now b{color:var(--gold)}
+#now{margin-top:4px;text-align:center;font-size:14px;color:#dfe6f2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}#now b{color:var(--gold)}
 .pill{width:auto!important;border-radius:26px!important;padding:0 16px;gap:8px;font-size:15px!important}.pill em{font-style:normal;font-size:13px;letter-spacing:.03em}
 .tick span{pointer-events:auto;cursor:pointer}.tick span:hover{color:#fff}
 #snd,#ter{width:auto;height:auto;border-radius:14px;padding:0 16px;font-size:20px;gap:6px}#ter.on{border-color:var(--gold);color:var(--gold)}
@@ -138,26 +143,51 @@ body.vlowzoom .mk .l{display:none}
 
 @media (max-width:1150px){.tick:not(.base) span{display:none}}
 @media (max-width:760px){
- #card{top:auto;left:8px;right:8px;width:auto;height:58vh;bottom:118px;transform:translateY(calc(100% + 140px))}
+ #card{top:auto;left:8px;right:8px;width:auto;bottom:var(--bar,118px);height:44vh;height:44dvh;transform:translateY(calc(100% + 140px));transition:transform .5s cubic-bezier(.2,.8,.2,1),height .35s ease}
  #card.open{transform:none}
- #hero{height:180px}
+ #card.sz-min{height:76px}
+ #card.sz-mid{height:44vh;height:44dvh}
+ #card.sz-max{height:calc(100vh - 210px);height:calc(100dvh - 210px)}
+ #card.sz-min #hero{height:76px;cursor:pointer}
+ #card.sz-mid #hero{height:150px}
+ #card.sz-max #hero{height:210px}
+ #card.sz-min #credit,#card.sz-min #body,#card.sz-min .nav,#card.sz-min #dots,#card.sz-min #heroBack{display:none!important}
+ #card.sz-min #hero .ttl h2{font-size:21px}
+ #card.sz-min #hero .ttl{bottom:8px}
  #brand span{display:none}
- .st{padding:2px 9px}.st b{font-size:16px}
+ #brand{padding:8px 12px}#brand b{font-size:12px;letter-spacing:.14em}
+ .st{padding:2px 8px}.st b{font-size:15px}.st small{font-size:9px}
  .tick span,.tick .dt,.tick.base span{display:none}
  .pill{width:42px!important;padding:0!important}.pill em{display:none}
  #bar{bottom:10px;padding:10px 12px 8px}
  #tl{height:44px}
- #top{top:8px;left:8px}
+ #top{top:8px;left:8px;gap:6px}
+ #snd,#ter{padding:0 10px!important;font-size:18px!important;height:46px}#ter em{display:none}
+ #grip{display:block}
 }
+#grip{display:none;position:absolute;top:0;left:0;right:0;height:22px;z-index:6;cursor:grab;touch-action:none}
+#grip:after{content:"";position:absolute;top:7px;left:50%;width:44px;height:5px;margin-left:-22px;border-radius:3px;background:rgba(255,255,255,.75);box-shadow:0 1px 4px rgba(0,0,0,.6)}
+#minBtn{position:absolute;top:10px;right:94px;z-index:4;height:32px;padding:0 12px;border-radius:16px;border:0;background:rgba(0,0,0,.5);color:#fff;cursor:pointer;font-size:12px;display:none}
+#minBtn:hover{background:rgba(255,255,255,.3)}
+#close{right:10px}
+#heroBack{right:52px!important;top:10px}
+@media (min-width:761px){#minBtn{display:block;right:52px}#heroBack{top:48px!important;right:10px!important}}
+@media (max-width:760px){#minBtn{display:block;right:52px;width:32px;padding:0;border-radius:50%;font-size:15px}#heroBack{top:48px!important;right:10px!important}}
+#card.open.collapsed{transform:translateX(calc(100% + 30px))}
+#cardTab{position:fixed;right:0;top:50%;transform:translateY(-50%);z-index:29;padding:12px 8px;border-radius:12px 0 0 12px;border:1px solid var(--line);border-right:0;background:var(--glass);backdrop-filter:blur(10px);color:var(--gold);cursor:pointer;font-size:13px;display:none;writing-mode:vertical-rl;letter-spacing:.12em}
+#cardTab:hover{background:rgba(255,199,102,.25)}
 #cap{position:fixed;top:16px;left:50%;transform:translateX(-50%);z-index:60;padding:8px 18px;font-size:15px;letter-spacing:.08em;display:none}
 .an{cursor:pointer;text-align:center;display:none}
 .an .in{animation:bob 2.6s ease-in-out infinite}
 body.showan .an.show{display:block}
+body.citylow .cm .l{display:none}
+.cm.sel .l{display:block!important}
+.cm.sel .d{transform:scale(1.25);box-shadow:0 0 0 4px rgba(255,255,255,.6),0 3px 10px rgba(0,0,0,.6)}
 .an .b{display:block;font-size:50px;line-height:1.05;filter:drop-shadow(0 4px 5px rgba(0,0,0,.75)) drop-shadow(0 0 10px rgba(255,214,140,.55));transition:transform .2s}.an:hover .b{transform:scale(1.18)}
 .an span{display:block;margin-top:3px;font-size:11px;font-weight:700;color:#fff;text-shadow:0 1px 4px #000,0 0 8px #000;white-space:nowrap}
 @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
 .cm .d{width:28px;height:28px;border-radius:50%;background:#ffd166;color:#1b1306;display:grid;place-items:center;font-weight:800;font-size:13px;border:2px solid #fff;box-shadow:0 3px 10px rgba(0,0,0,.6)}
-.cm.hotel .d{background:#7fd1ff;font-size:15px}
+.cm.cmh .d{background:#7fd1ff;font-size:15px}
 .cm .l{position:absolute;top:100%;margin-top:3px;white-space:nowrap;font-size:12px;font-weight:700;color:#fff;text-shadow:0 1px 4px #000,0 0 8px #000;left:50%;transform:translateX(-50%)}
 .cm{cursor:pointer}
 .citybtn{width:100%;margin:2px 0 14px;padding:11px 14px;border-radius:12px;border:1px solid var(--gold);background:rgba(255,199,102,.12);color:var(--gold);font-size:14px;font-weight:600;cursor:pointer}
@@ -170,6 +200,9 @@ body.showan .an.show{display:block}
 .anl{display:flex;flex-direction:column;gap:6px}.anl div{display:grid;grid-template-columns:34px 1fr;gap:8px;padding:8px 10px;border-radius:10px;background:rgba(255,255,255,.06);font-size:13px;line-height:1.4}.anl div{cursor:pointer}.anl div:hover{background:rgba(255,199,102,.16)}.anl em{font-size:24px;font-style:normal;grid-row:span 2;align-self:center}
 #heroBack{position:absolute;top:10px;right:52px;z-index:4;padding:6px 12px;border-radius:16px;border:0;background:rgba(0,0,0,.55);color:#fff;font-size:12px;cursor:pointer;display:none}#heroBack:hover{background:rgba(255,199,102,.9);color:#111}
 .poi.sel b{color:var(--gold)}.anl b{font-size:13.5px}
+button:focus-visible,input:focus-visible,#grip:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+@media (max-width:420px){#brand{display:none}#top{max-width:calc(100vw - 16px)}}
+@media (prefers-reduced-motion:reduce){.an .in,.mk.active .d{animation:none!important}*{scroll-behavior:auto!important}}
 </style>
 </head>
 <body>
@@ -193,17 +226,19 @@ body.showan .an.show{display:block}
     <div class="st"><b id="sDay">0</b><small>dias / 15</small></div>
     <div class="st"><b id="sStop">0</b><small>paragens / <span id="sStopT"></span></small></div>
   </div>
-  <button class="btn panel" id="snd" title="Música e sons (M)">🔊</button>
-  <button class="btn panel" id="ter" title="Relevo 3D (mais bonito, mas pesa mais)">⛰ <em style="font-style:normal;font-size:12px">Relevo: desligado</em></button>
+  <button class="btn panel" id="snd" aria-label="Ligar ou desligar a música" title="Música e sons (M)">🔊</button>
+  <button class="btn panel" id="ter" aria-label="Ligar ou desligar o relevo 3D" title="Relevo 3D (mais bonito, mas pesa mais)">⛰ <em style="font-style:normal;font-size:12px">Relevo: desligado</em></button>
 </div>
 
-<div id="cap" class="panel"></div>
+<button id="cardTab" title="Mostrar o cartão">◀ CARTÃO</button>
 <div id="card" class="panel">
+  <div id="grip" title="Puxa para cima/baixo"></div>
   <div id="cardscroll">
     <div id="hero">
       <div id="imgs"></div>
       <div id="dots"></div>
-      <button id="close" title="Fechar">✕</button>
+      <button id="minBtn" aria-label="Minimizar o cartão" title="Minimizar o cartão">▾</button>
+      <button id="close" aria-label="Fechar o cartão" title="Fechar">✕</button>
       <button id="heroBack">↩ Fotos do local</button>
       <button class="nav" id="prevph">‹</button><button class="nav" id="nextph">›</button>
       <div class="ttl"><small id="cDate"></small><h2 id="cName"></h2></div>
@@ -215,9 +250,9 @@ body.showan .an.show{display:block}
 
 <div id="bar" class="panel hud">
   <div class="row">
-    <button class="btn pill" id="prev" title="Paragem anterior (←)">◀<em>Anterior</em></button>
-    <button class="btn" id="play" title="Play / Pausa (espaço)">▶</button>
-    <button class="btn pill" id="next" title="Próxima paragem (→)"><em>Seguinte</em>▶</button>
+    <button class="btn pill" id="prev" aria-label="Paragem anterior" title="Paragem anterior (←)">◀<em>Anterior</em></button>
+    <button class="btn" id="play" aria-label="Play ou pausa" title="Play / Pausa (espaço)">▶</button>
+    <button class="btn pill" id="next" aria-label="Próxima paragem" title="Próxima paragem (→)"><em>Seguinte</em>▶</button>
     <div id="tl"><div id="fill"></div><input id="rng" type="range" min="0" max="1600" value="0" step="1"></div>
   </div>
   <div id="now"></div>
@@ -352,7 +387,7 @@ const PLACES = [
   hist:{x:'Em 1517–1518 os portugueses obtiveram licença do rei de Kotte para erguer um forte em Colombo, o início de mais de um século de presença; a cidade caiu em 1656 para os holandeses. Ficou muito mais do que pedra: o cingalês tem mais de mil palavras de origem portuguesa — <i>kapitan</i> (capitão), <i>soldadu</i> (soldado), e por aí fora — e apelidos como <b>Perera</b> (Pereira), <b>De Mel</b> (Melo), <b>Aponso</b> (Afonso) ou <b>Abrew</b> (Abreu). A palavra cingalesa para “português” é <b>Parangi</b>, do persa <i>farangi</i> (estrangeiro).',s:'No Pettah e na rua, repara nos apelidos em letreiros e lojas — Perera, De Mel, Aponso… — e pergunta ao motorista como se diz “janela” ou “mesa” em cingalês: vais ouvir o eco do português.'}},
 
  {id:'cmb2',path:'CMB2',type:'air',name:'Aeroporto de Colombo',tag:'Partida',date:'Dom 13 dez · 04h00',sd:'13 dez',icon:'✈️',photos:null,clima:'Negombo',
-  sum:'Descolagem às 4h00. Fim da viagem — e o início das saudades.',
+  sum:'Descolagem às 4h00. Fim da viagem — e o início das saudades.|🏁 Resumo: 15 dias, 15 paragens e cerca de 958 km por estrada e carril. Obrigado por ver.',
   days:[{d:'Dom 13 dez',it:[['04h00','Descolagem de Colombo.']]}]}
 ];
 
@@ -437,7 +472,7 @@ const map=new maplibregl.Map({
     },
     layers:[{id:'sat',type:'raster',source:'sat',paint:{'raster-fade-duration':0}},{id:'esri-hi',type:'raster',source:'esri',minzoom:14.2,paint:{'raster-fade-duration':350}}]
   },
-  center:[-8.7,41.1],zoom:1.6,pitch:0,bearing:0,maxPitch:75,attributionControl:{compact:true},
+  center:[20,12],zoom:1.3,pitch:0,bearing:0,maxPitch:75,attributionControl:{compact:true},
   renderWorldCopies:true,maxTileCacheSize:700,transformRequest:TR
 });
 function demLocal(z,x,y){return z>=6&&z<=10&&x>=tx(79.3,z)&&x<=tx(82.1,z)&&y>=ty(10.0,z)&&y<=ty(5.6,z);}
@@ -453,8 +488,7 @@ map.addControl(new maplibregl.NavigationControl({visualizePitch:true,showCompass
 let spinning=true,mapReady=false;
 const markers=[];
 let trav=null,travEl=null,curKind='',curH=0,moveDir=1,curScene='';
-const anEls=[],cityEls=[];let fEl=null,fMarker=null,cityOn=-1;let atStop=-1;let trMk=[];
-const OPO=[-8.6814,41.2481];
+const anEls=[],cityEls=[];let cityOn=-1;let atStop=-1;let trMk=[];
 
 const F=(w,h,tf,bg)=>`<i style="left:${-w/2}px;top:${-h/2}px;width:${w}px;height:${h}px;transform:${tf};background:${bg}"></i>`;
 function BOX(W,L,H,x,y,z,C){
@@ -572,15 +606,9 @@ map.once('style.load',()=>{
       new maplibregl.Marker({element:el,anchor:'bottom',offset:off}).setLngLat(p.ll).addTo(map);anEls.push(el);
     });
   });
-  map.addSource('flight',{type:'geojson',data:{type:'Feature',geometry:{type:'LineString',coordinates:[[0,0],[0,0]]}}});
-  map.addSource('flightdone',{type:'geojson',data:{type:'Feature',geometry:{type:'LineString',coordinates:[[0,0],[0,0]]}}});
-  map.addLayer({id:'flight-line',type:'line',source:'flight',paint:{'line-color':'#ffffff','line-width':1.6,'line-opacity':.5,'line-dasharray':[1.5,2.5]}});
-  map.addLayer({id:'flight-done',type:'line',source:'flightdone',paint:{'line-color':'#ffd166','line-width':3.2,'line-opacity':.95}});
   map.addSource('city',{type:'geojson',data:{type:'Feature',geometry:{type:'LineString',coordinates:[[0,0],[0,0]]}}});
   map.addLayer({id:'city-casing',type:'line',source:'city',paint:{'line-color':'#1b1306','line-width':7,'line-opacity':.7},layout:{'line-cap':'round','line-join':'round'}});
   map.addLayer({id:'city-line',type:'line',source:'city',paint:{'line-color':'#ffd166','line-width':4},layout:{'line-cap':'round','line-join':'round'}});
-  fEl=document.createElement('div');fEl.className='trav';fEl.innerHTML=ICONS.plane;fEl.style.display='none';
-  fMarker=new maplibregl.Marker({element:fEl,anchor:'center',rotationAlignment:'map',pitchAlignment:'map'}).setLngLat(OPO).addTo(map);
   [[TENDER3D,21],[COACH3D,36.5]].forEach(([html,px])=>{
     const el=document.createElement('div');el.className='trav';el.innerHTML=html;el.style.display='none';
     const m=new maplibregl.Marker({element:el,anchor:'center',rotationAlignment:'map',pitchAlignment:'map'}).setLngLat(PLACES[0].ll).addTo(map);
@@ -590,8 +618,9 @@ map.once('style.load',()=>{
   trav=new maplibregl.Marker({element:travEl,anchor:'center',rotationAlignment:'map',pitchAlignment:'map'}).setLngLat(PLACES[0].ll).addTo(map);
   mapReady=true;setProgress(0);
 });
-function zc(){const z=map.getZoom();if(trMk.length)placeTrain();document.body.classList.toggle('showan',atStop>=0&&z>=7.5);applyTerrain();document.body.classList.toggle('lowzoom',z<7.2);document.body.classList.toggle('vlowzoom',z<5.2);}
+function zc(){const z=map.getZoom();if(trMk.length)placeTrain();document.body.classList.toggle('showan',atStop>=0&&z>=7.5&&cityOn<0);document.body.classList.toggle('citylow',z<14.4);applyTerrain();document.body.classList.toggle('lowzoom',z<7.2);document.body.classList.toggle('vlowzoom',z<5.2);}
 map.on('zoom',zc);map.on('load',zc);
+map.on('load',()=>setTimeout(()=>{const a=document.querySelector('.maplibregl-ctrl-attrib');if(a)a.classList.remove('maplibregl-compact-show');},2500));
 function spin(){if(!spinning)return;const c=map.getCenter();map.setCenter([c.lng-0.09,c.lat]);requestAnimationFrame(spin);}
 map.once('style.load',()=>requestAnimationFrame(spin));
 
@@ -630,6 +659,7 @@ function setProgress(t){
   const k=Math.round(prog);
   if(Math.abs(prog-k)<0.02)$('#now').innerHTML=`<b>Paragem ${k+1} de ${N}</b> · ${PLACES[k].name} · ${PLACES[k].date}`;
   else{const to=PLACES[moveDir<0?Math.floor(prog):Math.ceil(prog)];$('#now').innerHTML=`${curKind==='train'?'🚂':'🚗'} A caminho de <b>${to.name}</b>`;}
+  syncBar();
   markers.forEach((m,i)=>m.classList.toggle('active',i===cur&&Math.abs(prog-cur)<0.02));
   const at=Math.abs(prog-k)<0.02?k:-1;anEls.forEach(e=>e.classList.toggle('show',+e.dataset.i===at));atStop=at;document.body.classList.toggle('showan',at>=0&&map.getZoom()>=7.5);
 }
@@ -638,7 +668,50 @@ function setProgress(t){
    CARTÃO
    ============================================================ */
 let photoIdx=0,photoTimer=null,curPhotos=[];
-function pad(){return isMobile()?{top:20,left:20,right:20,bottom:Math.round(innerHeight*.6)}:{top:30,left:30,right:470,bottom:130};}
+let sheet='mid',sheetPref='mid',cardHidden=false;
+const sheetH=()=>({min:76,mid:Math.round(innerHeight*.44),max:Math.round(innerHeight-210)}[sheet]);
+function syncBar(){const b=$('#bar');if(b)document.documentElement.style.setProperty('--bar',(b.offsetHeight+18)+'px');}
+addEventListener('resize',()=>setTimeout(syncBar,50));
+function barH(){const b=$('#bar');return (b?b.offsetHeight:100)+16;}
+function pad(){
+  if(isMobile()){const sz=(cityOn<0)?sheetPref:sheet;const h={min:76,mid:Math.round(innerHeight*.44),max:Math.round(innerHeight-210)}[sz];return {top:92,left:14,right:14,bottom:h+barH()+10};}
+  return {top:30,left:30,right:cardHidden?30:470,bottom:130};
+}
+function applySheet(){
+  const c=$('#card');
+  ['min','mid','max'].forEach(k=>c.classList.toggle('sz-'+k,sheet===k));
+  const mob=isMobile();
+  c.classList.toggle('collapsed',cardHidden&&!mob);
+  $('#cardTab').style.display=(cardHidden&&!mob&&cardIdx>=0)?'block':'none';
+  const mb=$('#minBtn');
+  mb.textContent=mob?(sheet==='min'?'▴':'▾'):'⇥';
+  mb.title=mob?(sheet==='min'?'Expandir o cartão':'Minimizar o cartão'):'Esconder o cartão';
+}
+function setSheet(k,manual){
+  sheet=k;if(manual)sheetPref=k;applySheet();
+  if(cardIdx>=0&&mapReady){if(cityOn>=0)fitCity(700);else map.easeTo({padding:pad(),duration:450});}
+}
+function toggleHidden(v){
+  cardHidden=v;applySheet();
+  if(cardIdx>=0&&mapReady){if(cityOn>=0)fitCity(700);else map.easeTo({padding:pad(),duration:450});}
+}
+addEventListener('resize',()=>{applySheet();});
+(function(){ // arrastar a folha no telemóvel
+  const g=$('#grip'),h=$('#hero');let y0=null,moved=false;
+  const order=['min','mid','max'];
+  const down=e=>{y0=e.clientY;moved=false;};
+  const up=e=>{
+    if(y0===null)return;const dy=e.clientY-y0;y0=null;
+    const i=order.indexOf(sheet);
+    if(dy<-35){setSheet(order[Math.min(2,i+1)],true);moved=true;}
+    else if(dy>35){setSheet(order[Math.max(0,i-1)],true);moved=true;}
+    else if(e.currentTarget===g){setSheet(sheet==='min'?'mid':(sheet==='mid'?'max':'mid'),true);moved=true;}
+    if(moved)h.dataset.dragged='1';
+  };
+  g.addEventListener('pointerdown',down);g.addEventListener('pointerup',up);
+  h.addEventListener('pointerdown',e=>{if(isMobile())down(e);});
+  h.addEventListener('pointerup',e=>{if(isMobile())up(e);});
+})();
 function clockStr(){return new Date().toLocaleTimeString('pt-PT',{timeZone:'Asia/Colombo',hour:'2-digit',minute:'2-digit'});}
 let heroOverride=false;
 function buildHero(list,alt,icon){
@@ -670,7 +743,7 @@ function openCard(i){
   if(p.km)h+=`<span class="chip">${p.mode==='rail'?'🚂':'🚗'} ${Math.round(p.km)} km${p.mode==='rail'?' (comboio, aprox.)':''}</span>`;
   h+=`<span class="chip clock">🕒 <span id="clk">${clockStr()}</span> no Sri Lanka · +5h30 vs Portugal</span></div>`;
   if(CITY[p.id]&&CITY[p.id].pts.length)h+=`<button class="citybtn" id="cityBtn">🏙 Ver hotel e pontos a ver${CITY[p.id].route.length?' (com trajeto)':''}</button><div id="cityinfo"></div>`;
-  h+=`<p class="sum">${p.sum}</p>`;
+  h+=`<p class="sum">${p.sum.split('|').join('<br><br>')}</p>`;
   if(p.alert)h+=`<div class="alert">${p.alert}</div>`;
   p.days.forEach(d=>{h+=`<div class="day"><h4>${d.d}</h4>`+d.it.map(x=>`<div class="it"><b>${x[0]}</b><span>${x[1]}</span></div>`).join('')+'</div>';});
   if(p.hist)h+=`<div class="hist"><h4>🇵🇹 Elo português</h4><p>${p.hist.x}</p><p class="s">💡 ${p.hist.s}</p></div>`;
@@ -683,8 +756,10 @@ function openCard(i){
   document.querySelectorAll('.anl div').forEach(el=>el.onclick=()=>showAnimal(i,decodeURIComponent(el.dataset.a)));
   if(cityOn!==i)exitCity(true);
   $('#card').classList.add('open');
+  if(isMobile()&&cityOn<0)sheet=sheetPref;
+  applySheet();
 }
-function closeCard(){heroOverride=false;$('#card').classList.remove('open');clearInterval(photoTimer);cardIdx=-1;exitCity(true);}
+function closeCard(){heroOverride=false;$('#card').classList.remove('open');$('#cardTab').style.display='none';clearInterval(photoTimer);cardIdx=-1;exitCity(true);}
 function showAnimal(i,name){
   if(cardIdx!==i)openCard(i);
   const ph=EXTRA.anim[name];const em=(ANIM[PLACES[i].id].find(a=>a[1]===name)||['🐾'])[0];
@@ -693,15 +768,16 @@ function showAnimal(i,name){
 function exitCity(quiet){
   if(cityOn<0)return;travEl.style.display='block';cityEls.forEach(m=>m.remove());cityEls.length=0;
   if(map.getSource('city'))map.getSource('city').setData({type:'Feature',geometry:{type:'LineString',coordinates:[[0,0],[0,0]]}});
-  const prev=cityOn;cityOn=-1;const info=$('#cityinfo');if(info)info.innerHTML='';const b=$('#cityBtn');if(b)b.textContent='🏙 Ver hotel e pontos a ver'+((CITY[PLACES[prev].id]||{route:[]}).route.length?' (com trajeto)':'');
+  const prev=cityOn;cityOn=-1;if(isMobile()&&cardIdx>=0)setSheet(sheetPref,false);const info=$('#cityinfo');if(info)info.innerHTML='';const b=$('#cityBtn');if(b)b.textContent='🏙 Ver hotel e pontos a ver'+((CITY[PLACES[prev].id]||{route:[]}).route.length?' (com trajeto)':'');
   if(!quiet&&cardIdx===prev)flyToStop(prev,1800);
 }
 function toggleCity(i){
   if(cityOn===i){exitCity(false);return;}
   exitCity(true);cityOn=i;const p=PLACES[i],D=CITY[p.id];
+  if(isMobile())setSheet('min',false);else if(cardHidden)toggleHidden(false);
   map.getSource('city').setData({type:'Feature',geometry:{type:'LineString',coordinates:D.route.length?D.route:[[0,0],[0,0]]}});
   D.pts.forEach((q,k)=>{
-    const el=document.createElement('div');el.className='mk cm '+q.k;
+    const el=document.createElement('div');el.className='mk cm '+(q.k==='hotel'?'cmh':'cmp');
     el.innerHTML=`<div class="d">${q.k==='hotel'?'🏨':(k+1-(D.pts[0].k==='hotel'?1:0))}</div><span class="l">${q.n.replace(/^Hotel — /,'🏨 ')}${q.ap?' (aprox.)':''}</span>`;
     el.addEventListener('click',e=>{e.stopPropagation();focusPoi(q);});
     cityEls.push(new maplibregl.Marker({element:el,anchor:'center'}).setLngLat(q.ll).addTo(map));
@@ -710,22 +786,32 @@ function toggleCity(i){
   let info=(!hotelPt&&p.hotel)?`<div class="note" style="margin:0 0 6px">🏨 ${p.hotel.name}: localização exata por confirmar no Booking (não está marcada no mapa).</div>`:'';
   let n=0;info+=D.pts.map(q=>{const num=q.k==='hotel'?'🏨':(++n);return `<div class="poi ${q.k}" data-n="${encodeURIComponent(q.n)}"><i>${num}</i><div><b>${q.n.replace(/^Hotel — /,'')}${q.ap?' <small style="font-weight:400;color:#ffb98a">(posição aprox.)</small>':''}</b><span>${q.t}</span></div></div>`;}).join('');
   $('#cityinfo').innerHTML=info;
-  document.querySelectorAll('.poi').forEach(el=>el.onclick=()=>{const n=decodeURIComponent(el.dataset.n);focusPoi(D.pts.find(q=>q.n===n));});
+  document.querySelectorAll('#cityinfo .poi').forEach(el=>el.onclick=()=>{const n=decodeURIComponent(el.dataset.n);focusPoi(D.pts.find(q=>q.n===n));});
   $('#cityBtn').textContent='↩ Voltar ao percurso';
   travEl.style.display='none';
+  fitCity(2400);
+}
+function fitCity(dur){
+  if(cityOn<0)return;const D=CITY[PLACES[cityOn].id];
   const med=v=>{const t=[...v].sort((x,y)=>x-y);return t[Math.floor(t.length/2)];};
   const mlo=med(D.pts.map(q=>q.ll[0])),mla=med(D.pts.map(q=>q.ll[1]));
   let core=D.pts.filter(q=>Math.hypot((q.ll[0]-mlo)*111*Math.cos(mla*Math.PI/180),(q.ll[1]-mla)*111)<2.5);if(core.length<2)core=D.pts;
   const lons=core.map(q=>q.ll[0]),lats=core.map(q=>q.ll[1]);
-  if(D.pts.length>1)map.fitBounds([[Math.min(...lons),Math.min(...lats)],[Math.max(...lons),Math.max(...lats)]],{padding:pad(),maxZoom:15.6,pitch:48,bearing:0,duration:2400});
-  else map.flyTo({center:D.pts[0].ll,zoom:15,pitch:50,padding:pad(),duration:2200});
+  map.stop();map.setPadding({top:0,left:0,right:0,bottom:0});
+  const bb=[[Math.min(...lons),Math.min(...lats)],[Math.max(...lons),Math.max(...lats)]];
+  try{
+    if(D.pts.length>1)map.fitBounds(bb,{padding:pad(),maxZoom:15.6,pitch:48,bearing:0,duration:dur});
+    else map.flyTo({center:D.pts[0].ll,zoom:15,pitch:50,padding:pad(),duration:dur});
+  }catch(e){map.flyTo({center:[(bb[0][0]+bb[1][0])/2,(bb[0][1]+bb[1][1])/2],zoom:14.5,pitch:48,padding:pad(),duration:dur});}
 }
 function focusPoi(q){
+  if(isMobile()&&sheet==='min')setSheet('mid',false);
   map.flyTo({center:q.ll,zoom:16.2,pitch:55,padding:pad(),duration:1800,essential:true});
   const pid=PLACES[cityOn>=0?cityOn:Math.max(0,cardIdx)].id;
   const ph=q.n?EXTRA.poi[pid+'|'+q.n]:null;
   if(ph&&ph.length)heroFor(ph,'📍 '+q.n);else heroRestore();
-  document.querySelectorAll('.poi').forEach(e=>e.classList.toggle('sel',q.n&&decodeURIComponent(e.dataset.n)===q.n));
+  document.querySelectorAll('#cityinfo .poi').forEach(e=>e.classList.toggle('sel',q.n&&decodeURIComponent(e.dataset.n)===q.n));
+  cityEls.forEach((m,k)=>m.getElement().classList.toggle('sel',CITY[pid].pts[k]&&CITY[pid].pts[k].n===q.n));
   $('#cardscroll').scrollTop=0;
 }
 function showPhoto(k){
@@ -739,16 +825,22 @@ function updateCredit(){
   $('#credit').style.display=c?'block':'none';
 }
 setInterval(()=>{const e=$('#clk');if(e)e.textContent=clockStr();},20000);
+document.addEventListener('visibilitychange',()=>{if(document.hidden&&playing)pause();});
+$('#card').addEventListener('pointerdown',()=>{if(playing)pause();});
 $('#heroBack').onclick=e=>{e.stopPropagation();heroRestore();};
+$('#minBtn').onclick=e=>{e.stopPropagation();if(isMobile())setSheet(sheet==='min'?'mid':'min',true);else toggleHidden(true);};
+$('#cardTab').onclick=()=>toggleHidden(false);
 $('#close').onclick=e=>{e.stopPropagation();closeCard();map.easeTo({padding:{top:0,left:0,right:0,bottom:0},duration:700});};
 $('#prevph').onclick=e=>{e.stopPropagation();showPhoto(photoIdx-1);clearInterval(photoTimer);};
 $('#nextph').onclick=e=>{e.stopPropagation();showPhoto(photoIdx+1);clearInterval(photoTimer);};
-$('#hero').onclick=()=>{const c=curPhotos[photoIdx];if(!c)return;$('#lb img').src=c.f;$('#lb').classList.add('on');};
+$('#hero').onclick=()=>{if(isMobile()&&sheet==='min'){setSheet('mid',true);return;}if($('#hero').dataset.dragged){delete $('#hero').dataset.dragged;return;}const c=curPhotos[photoIdx];if(!c)return;$('#lb img').src=c.f;$('#lb').classList.add('on');};
 $('#lb').onclick=()=>$('#lb').classList.remove('on');
 
 /* ============================================================
    CÂMARA E ANIMAÇÃO
    ============================================================ */
+const SPEED=Math.max(.25,+(new URLSearchParams(location.search).get('speed')||1));
+window.__errs=[];addEventListener('error',e=>window.__errs.push(e.message));addEventListener('unhandledrejection',e=>window.__errs.push(String(e.reason)));
 const sleep=(ms,tk)=>new Promise(r=>{const t0=performance.now();(function w(){if(tk!==token||performance.now()-t0>=ms)return r();requestAnimationFrame(w);})();});
 const moveEnd=()=>new Promise(r=>map.once('moveend',r));
 const ease=t=>t<.5?2*t*t:1-Math.pow(-2*t+2,2)/2;
@@ -762,6 +854,7 @@ async function arrive(i,tk,dwell){
   cur=i;setProgress(i);
   flyToStop(i,3800);await moveEnd();if(tk!==token)return;
   openCard(i);
+  dwell=dwell/SPEED;
   map.easeTo({bearing:bearingFor(i)+22,duration:dwell,easing:t=>t,padding:pad()});
   await sleep(dwell,tk);
 }
@@ -770,7 +863,7 @@ async function tween(from,to,tk){
   const kmSeg=Math.max(Math.abs(kmAt(to)-kmAt(from)),4);
   closeCard();map.stop();
   map.easeTo({padding:{top:0,left:0,right:0,bottom:0},duration:600});await sleep(600,tk);if(tk!==token)return;
-  const dur=Math.max(2800,Math.min(9000,kmSeg*50)),zT=Math.max(8.2,Math.min(10.8,11.7-1.15*Math.log2(kmSeg/5)));
+  const dur=Math.max(2800,Math.min(9000,kmSeg*50))/SPEED,zT=Math.max(8.2,Math.min(10.8,11.7-1.15*Math.log2(kmSeg/5)));
   const z0=map.getZoom(),b0=map.getBearing(),b1=bearingFor(Math.round(to)),bTo=b0+(((b1-b0+540)%360)-180)*0.6;
   const t0=performance.now();let cx=null;
   await new Promise(res=>{(function fr(){
@@ -785,13 +878,14 @@ async function tween(from,to,tk){
   moveDir=1;
 }
 const travel=(i,tk)=>tween(i-1,i,tk);
+let navTarget=null;
 async function moveTo(target){
   target=Math.max(0,Math.min(N-1,target));
-  if(Math.abs(prog-target)<1e-3){goTo(target);return;}
-  const tk=++token;playing=false;playBtn.textContent='▶';map.stop();
+  if(Math.abs(prog-target)<1e-3){navTarget=null;goTo(target);return;}
+  const tk=++token;navTarget=target;playing=false;playBtn.textContent='▶';map.stop();
   await tween(prog,target,tk);if(tk!==token)return;
   cur=target;setProgress(target);flyToStop(target,2600);await moveEnd();if(tk!==token)return;
-  openCard(target);
+  navTarget=null;openCard(target);
 }
 async function playFrom(i0){
   const tk=++token;playing=true;playBtn.textContent='❚❚';
@@ -805,9 +899,9 @@ async function playFrom(i0){
     if(tk===token){playing=false;playBtn.textContent='↺';}
   }catch(e){console.error(e);}
 }
-function pause(){token++;playing=false;playBtn.textContent='▶';map.stop();}
+function pause(){token++;navTarget=null;playing=false;playBtn.textContent='▶';map.stop();}
 function goTo(i){
-  i=Math.max(0,Math.min(N-1,i));exitCity(true);token++;playing=false;playBtn.textContent='▶';map.stop();
+  i=Math.max(0,Math.min(N-1,i));exitCity(true);token++;navTarget=null;playing=false;playBtn.textContent='▶';map.stop();
   cur=i;setProgress(i);flyToStop(i,2600);openCard(i);
 }
 playBtn.onclick=()=>{
@@ -815,8 +909,8 @@ playBtn.onclick=()=>{
   if(prog>=N-1-1e-6){cur=0;setProgress(0);playFrom(0);return;}
   playFrom(cur===0&&cardIdx<0&&prog<1e-6?0:cur+1);
 };
-$('#prev').onclick=()=>moveTo(Math.ceil(prog-1e-6)-1);
-$('#next').onclick=()=>moveTo(Math.floor(prog+1e-6)+1);
+$('#prev').onclick=()=>moveTo((navTarget!==null?navTarget:Math.ceil(prog-1e-6))-1);
+$('#next').onclick=()=>moveTo((navTarget!==null?navTarget:Math.floor(prog+1e-6))+1);
 rng.addEventListener('input',()=>{pause();closeCard();cur=Math.round(rng.value/100);setProgress(rng.value/100);const pos=posAt(prog);map.jumpTo({center:pos,padding:{top:0,left:0,right:0,bottom:0}});});
 rng.addEventListener('change',()=>{moveTo(Math.round(rng.value/100));});
 document.addEventListener('keydown',e=>{
@@ -832,38 +926,6 @@ document.addEventListener('keydown',e=>{
    INTRO
    ============================================================ */
 let started=false;
-function gcPoints(a,b,n){
-  const r=Math.PI/180,V=p=>{const la=p[1]*r,lo=p[0]*r;return [Math.cos(la)*Math.cos(lo),Math.cos(la)*Math.sin(lo),Math.sin(la)];};
-  const A=V(a),B=V(b),w=Math.acos(Math.max(-1,Math.min(1,A[0]*B[0]+A[1]*B[1]+A[2]*B[2]))),out=[];
-  for(let i=0;i<=n;i++){const t=i/n,s1=Math.sin((1-t)*w)/Math.sin(w),s2=Math.sin(t*w)/Math.sin(w);
-    const x=s1*A[0]+s2*B[0],y=s1*A[1]+s2*B[1],z=s1*A[2]+s2*B[2];out.push([Math.atan2(y,x)/r,Math.atan2(z,Math.hypot(x,y))/r]);}
-  return out;
-}
-const sm=t=>{t=Math.max(0,Math.min(1,t));return t*t*(3-2*t);};
-function flightIntro(done){
-  const pts=gcPoints(OPO,PLACES[0].ll,260),cap=$('#cap');
-  map.getSource('flight').setData({type:'Feature',geometry:{type:'LineString',coordinates:pts}});
-  fEl.style.display='block';fMarker.setLngLat(pts[0]);cap.style.display='block';cap.textContent='✈  Porto → Colombo';
-  map.jumpTo({center:pts[0],zoom:5.2,pitch:35,bearing:0,padding:{top:0,left:0,right:0,bottom:0}});
-  Snd.plane(true);
-  const dur=15000,t0=performance.now();let cx=[...pts[0]],h=0;
-  (function fr(){
-    const u=Math.min(1,(performance.now()-t0)/dur),s=1-Math.pow(1-u,1.35);
-    const fi=s*(pts.length-1),i=Math.min(pts.length-2,Math.floor(fi)),f=fi-i,a=pts[i],b=pts[i+1];
-    const pos=[a[0]+(b[0]-a[0])*f,a[1]+(b[1]-a[1])*f];
-    fMarker.setLngLat(pos);
-    const ahead=pts[Math.min(pts.length-1,i+4)];const tg=brg(pos,ahead);h=(h+((((tg-h)+540)%360)-180)*.25+360)%360;fMarker.setRotation(h);
-    map.getSource('flightdone').setData({type:'Feature',geometry:{type:'LineString',coordinates:pts.slice(0,i+1).concat([pos])}});
-    cx[0]+=(pos[0]-cx[0])*.18;cx[1]+=(pos[1]-cx[1])*.18;
-    let z;if(u<.16)z=5.2+(2.7-5.2)*sm(u/.16);else if(u<.72)z=2.7;else z=2.7+(8.8-2.7)*sm((u-.72)/.28);
-    const k=sm((u-.78)/.22);
-    map.jumpTo({center:cx,zoom:z,pitch:35*(1-sm(u/.16))+55*k,bearing:-20*k});
-    if(u>.9)cap.textContent='Bem-vindos ao Sri Lanka 🇱🇰';
-    if(u>=1){Snd.plane(false);setTimeout(()=>{fEl.style.display='none';cap.style.display='none';done();},900);return;}
-    if(u>.93)Snd.plane(false);
-    requestAnimationFrame(fr);
-  })();
-}
 function begin(skip){
   if(started)return;started=true;spinning=false;
   $('#start').style.display='none';$('#early').style.display='none';
@@ -872,8 +934,9 @@ function begin(skip){
   $('#intro').style.background='transparent';$('#intro').classList.add('going');
   map.stop();
   if(skip){map.jumpTo({center:PLACES[0].ll,zoom:8,pitch:50});finish();return;}
-  document.body.classList.add('ready');$('#intro').classList.add('hide');
-  flightIntro(()=>{cur=0;setProgress(0);goTo(0);});
+  // do espaço até ao Sri Lanka, em duas fases (aproximação e mergulho)
+  map.flyTo({center:[78,9],zoom:3.1,pitch:0,bearing:0,duration:4200,curve:1.2,essential:true,easing:t=>t*t*(3-2*t)});
+  moveEnd().then(()=>{map.flyTo({center:PLACES[0].ll,zoom:8.6,pitch:55,bearing:-20,duration:5200,curve:1.5,essential:true});return moveEnd();}).then(finish);
 }
 $('#start').onclick=()=>{Snd.enable(true);begin(false);};
 $('#start').disabled=true;$('#start').textContent='A carregar o globo…';

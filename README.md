@@ -6,6 +6,14 @@ Página interativa com um globo 3D da viagem ao Sri Lanka (29 nov – 13 dez 202
 
 Para usar localmente, corre `Abrir_Viagem.bat` (precisa de Python) ou serve a pasta com qualquer servidor web. Não abre bem por duplo clique no HTML.
 
+## Como usar
+- **Play** percorre a viagem; **Anterior/Seguinte** avançam uma paragem (carregar várias vezes salta várias). A barra também se arrasta.
+- **Telemóvel:** o cartão é uma folha que se puxa para cima/baixo, ou se minimiza com ▾, para ver o mapa. No modo cidade fica minimizada.
+- **Computador:** o botão ⇥ esconde o cartão (fica um separador "CARTÃO" à direita).
+- **Hotel e pontos a ver:** mostra o hotel e os pontos numerados com o trajeto; tocar num ponto mostra as fotos dele.
+- Atalhos: espaço = play/pausa, ← → = paragens, M = música.
+- Opcional: `?speed=4` acelera as animações.
+
 ## Créditos e licenças
 - **Imagem de satélite:** Sentinel-2 cloudless © EOX IT Services GmbH (contém dados Copernicus Sentinel modificados 2021), CC BY-NC-SA 4.0. Uso não comercial. Detalhe das cidades: Esri, Maxar (carregado online).
 - **Relevo:** Terrain Tiles (Mapzen / AWS Open Data).
