@@ -11,7 +11,7 @@ Para usar localmente, corre `Abrir_Viagem.bat` (precisa de Python) ou serve a pa
 - **Telemóvel:** o cartão é uma folha que se puxa para cima/baixo, ou se minimiza com ▾, para ver o mapa. No modo cidade fica minimizada.
 - **Computador:** o botão ⇥ esconde o cartão (fica um separador "CARTÃO" à direita).
 - **Hotel e pontos a ver:** mostra o hotel e os pontos numerados com o trajeto; tocar num ponto mostra as fotos dele.
-- Atalhos: espaço = play/pausa, ← → = paragens, M = música.
+- Atalhos: espaço = play/pausa, ← → = paragens, Esc = voltar atrás.
 - Opcional: `?speed=4` acelera as animações.
 
 ## Créditos e licenças
@@ -20,6 +20,7 @@ Para usar localmente, corre `Abrir_Viagem.bat` (precisa de Python) ou serve a pa
 - **Mapa e globo:** MapLibre GL JS (BSD-3-Clause), incluído em `libs/`.
 - **Fotos:** Wikimedia Commons, cada uma com o autor e a licença (CC BY, CC BY-SA, CC0 ou domínio público) visíveis no cartão e ligação à página original.
 - **Rotas e pontos:** © OpenStreetMap contributors (OSRM e Nominatim). Clima: Open-Meteo.
-- A música e os sons são sintetizados no navegador.
+- Sem música nem sons.
+- Fotos e notas dos viajantes ficam só no próprio dispositivo (IndexedDB/localStorage); "Mapas offline" guarda ficheiros no navegador (cache).
 
 Os conteúdos são para uso pessoal e não comercial.
