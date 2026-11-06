@@ -128,6 +128,10 @@ a.chip:hover{border-color:var(--gold);color:var(--gold)}
 .mk.poi .d{width:16px;height:16px;background:#7fd1ff;border-width:2px}
 .mk.air .d{width:30px;height:30px;background:#fff;font-size:15px}
 .mk:hover .d{transform:scale(1.25)}
+body.incity .mk:not(.cm){display:none}
+#backMap{position:fixed;left:14px;top:84px;z-index:21;display:none;padding:11px 18px;border-radius:24px;border:1px solid rgba(255,199,102,.7);background:rgba(20,16,10,.88);backdrop-filter:blur(10px);color:#ffd48a;font-size:14px;font-weight:600;cursor:pointer;box-shadow:0 4px 18px rgba(0,0,0,.5)}
+#backMap:hover{background:var(--gold);color:#1b1306}
+@media (max-width:760px){#backMap{top:68px;left:8px;padding:10px 15px;font-size:13px}}
 .mk.active .d{animation:pulse 1.8s infinite;transform:scale(1.2)}
 @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(255,199,102,.8),0 2px 10px rgba(0,0,0,.6)}100%{box-shadow:0 0 0 22px rgba(255,199,102,0),0 2px 10px rgba(0,0,0,.6)}}
 .mk .l{position:absolute;top:100%;margin-top:2px;white-space:nowrap;font-size:12px;font-weight:600;text-shadow:0 1px 4px #000,0 0 8px #000;pointer-events:none;letter-spacing:.03em}
@@ -230,6 +234,7 @@ button:focus-visible,input:focus-visible,#grip:focus-visible{outline:2px solid v
   <button class="btn panel" id="ter" aria-label="Ligar ou desligar o relevo 3D" title="Relevo 3D (mais bonito, mas pesa mais)">⛰ <em style="font-style:normal;font-size:12px">Relevo: desligado</em></button>
 </div>
 
+<button id="backMap" aria-label="Voltar atrás no mapa">↩ Voltar</button>
 <button id="cardTab" title="Mostrar o cartão">◀ CARTÃO</button>
 <div id="card" class="panel">
   <div id="grip" title="Puxa para cima/baixo"></div>
@@ -713,7 +718,10 @@ addEventListener('resize',()=>{applySheet();});
   h.addEventListener('pointerup',e=>{if(isMobile())up(e);});
 })();
 function clockStr(){return new Date().toLocaleTimeString('pt-PT',{timeZone:'Asia/Colombo',hour:'2-digit',minute:'2-digit'});}
-let heroOverride=false;
+let heroOverride=false,poiFocus=null;
+function syncBack(){const b=$('#backMap');document.body.classList.toggle('incity',cityOn>=0);if(cityOn<0){b.style.display='none';return;}b.style.display='block';b.textContent=poiFocus?'↩ Voltar à cidade':'↩ Voltar ao percurso';}
+function backToCity(){if(cityOn<0)return;poiFocus=null;heroRestore();document.querySelectorAll('#cityinfo .poi').forEach(e=>e.classList.remove('sel'));cityEls.forEach(m=>m.getElement().classList.remove('sel'));syncBack();fitCity(1400);}
+function stepBack(){if(poiFocus)backToCity();else if(cityOn>=0)exitCity(false);else return false;return true;}
 function buildHero(list,alt,icon){
   curPhotos=list;const imgs=$('#imgs');imgs.innerHTML='';
   if(!list.length)imgs.innerHTML=`<div style="position:absolute;inset:0;display:grid;place-items:center;font-size:84px;opacity:.5">${icon||'📍'}</div>`;
@@ -726,7 +734,7 @@ function buildHero(list,alt,icon){
 }
 function heroFor(list,label){
   if(!list||!list.length||cardIdx<0)return;heroOverride=true;buildHero(list,label);
-  $('#cDate').textContent=label;$('#heroBack').style.display='block';$('#cardscroll').scrollTop=0;
+  $('#cDate').textContent=label;$('#heroBack').textContent=poiFocus?'↩ Voltar à cidade':'↩ Fotos do local';$('#heroBack').style.display='block';$('#cardscroll').scrollTop=0;
 }
 function heroRestore(){
   if(!heroOverride||cardIdx<0)return;heroOverride=false;const p=PLACES[cardIdx];
@@ -768,12 +776,13 @@ function showAnimal(i,name){
 function exitCity(quiet){
   if(cityOn<0)return;travEl.style.display='block';cityEls.forEach(m=>m.remove());cityEls.length=0;
   if(map.getSource('city'))map.getSource('city').setData({type:'Feature',geometry:{type:'LineString',coordinates:[[0,0],[0,0]]}});
-  const prev=cityOn;cityOn=-1;if(isMobile()&&cardIdx>=0)setSheet(sheetPref,false);const info=$('#cityinfo');if(info)info.innerHTML='';const b=$('#cityBtn');if(b)b.textContent='🏙 Ver hotel e pontos a ver'+((CITY[PLACES[prev].id]||{route:[]}).route.length?' (com trajeto)':'');
-  if(!quiet&&cardIdx===prev)flyToStop(prev,1800);
+  const prev=cityOn;cityOn=-1;poiFocus=null;if(isMobile()&&cardIdx>=0)setSheet(sheetPref,false);const info=$('#cityinfo');if(info)info.innerHTML='';const b=$('#cityBtn');if(b)b.textContent='🏙 Ver hotel e pontos a ver'+((CITY[PLACES[prev].id]||{route:[]}).route.length?' (com trajeto)':'');
+  if(!quiet&&cardIdx===prev){heroRestore();flyToStop(prev,1800);}
+  syncBack();
 }
 function toggleCity(i){
   if(cityOn===i){exitCity(false);return;}
-  exitCity(true);cityOn=i;const p=PLACES[i],D=CITY[p.id];
+  exitCity(true);cityOn=i;poiFocus=null;const p=PLACES[i],D=CITY[p.id];
   if(isMobile())setSheet('min',false);else if(cardHidden)toggleHidden(false);
   map.getSource('city').setData({type:'Feature',geometry:{type:'LineString',coordinates:D.route.length?D.route:[[0,0],[0,0]]}});
   D.pts.forEach((q,k)=>{
@@ -789,6 +798,7 @@ function toggleCity(i){
   document.querySelectorAll('#cityinfo .poi').forEach(el=>el.onclick=()=>{const n=decodeURIComponent(el.dataset.n);focusPoi(D.pts.find(q=>q.n===n));});
   $('#cityBtn').textContent='↩ Voltar ao percurso';
   travEl.style.display='none';
+  syncBack();
   fitCity(2400);
 }
 function fitCity(dur){
@@ -805,6 +815,7 @@ function fitCity(dur){
   }catch(e){map.flyTo({center:[(bb[0][0]+bb[1][0])/2,(bb[0][1]+bb[1][1])/2],zoom:14.5,pitch:48,padding:pad(),duration:dur});}
 }
 function focusPoi(q){
+  poiFocus=q;syncBack();
   if(isMobile()&&sheet==='min')setSheet('mid',false);
   map.flyTo({center:q.ll,zoom:16.2,pitch:55,padding:pad(),duration:1800,essential:true});
   const pid=PLACES[cityOn>=0?cityOn:Math.max(0,cardIdx)].id;
@@ -827,10 +838,11 @@ function updateCredit(){
 setInterval(()=>{const e=$('#clk');if(e)e.textContent=clockStr();},20000);
 document.addEventListener('visibilitychange',()=>{if(document.hidden&&playing)pause();});
 $('#card').addEventListener('pointerdown',()=>{if(playing)pause();});
-$('#heroBack').onclick=e=>{e.stopPropagation();heroRestore();};
+$('#heroBack').onclick=e=>{e.stopPropagation();if(poiFocus)backToCity();else heroRestore();};
+$('#backMap').onclick=e=>{e.stopPropagation();stepBack();};
 $('#minBtn').onclick=e=>{e.stopPropagation();if(isMobile())setSheet(sheet==='min'?'mid':'min',true);else toggleHidden(true);};
 $('#cardTab').onclick=()=>toggleHidden(false);
-$('#close').onclick=e=>{e.stopPropagation();closeCard();map.easeTo({padding:{top:0,left:0,right:0,bottom:0},duration:700});};
+$('#close').onclick=e=>{e.stopPropagation();if(stepBack())return;closeCard();map.easeTo({padding:{top:0,left:0,right:0,bottom:0},duration:700});};
 $('#prevph').onclick=e=>{e.stopPropagation();showPhoto(photoIdx-1);clearInterval(photoTimer);};
 $('#nextph').onclick=e=>{e.stopPropagation();showPhoto(photoIdx+1);clearInterval(photoTimer);};
 $('#hero').onclick=()=>{if(isMobile()&&sheet==='min'){setSheet('mid',true);return;}if($('#hero').dataset.dragged){delete $('#hero').dataset.dragged;return;}const c=curPhotos[photoIdx];if(!c)return;$('#lb img').src=c.f;$('#lb').classList.add('on');};
@@ -864,6 +876,7 @@ async function tween(from,to,tk){
   closeCard();map.stop();
   map.easeTo({padding:{top:0,left:0,right:0,bottom:0},duration:600});await sleep(600,tk);if(tk!==token)return;
   const dur=Math.max(2800,Math.min(9000,kmSeg*50))/SPEED,zT=Math.max(8.2,Math.min(10.8,11.7-1.15*Math.log2(kmSeg/5)));
+  if(map.getZoom()>12.5){map.easeTo({zoom:11,pitch:50,duration:900/SPEED,padding:{top:0,left:0,right:0,bottom:0}});await sleep(950/SPEED,tk);if(tk!==token)return;}
   const z0=map.getZoom(),b0=map.getBearing(),b1=bearingFor(Math.round(to)),bTo=b0+(((b1-b0+540)%360)-180)*0.6;
   const t0=performance.now();let cx=null;
   await new Promise(res=>{(function fr(){
@@ -892,7 +905,7 @@ async function playFrom(i0){
   try{
     for(let i=i0;i<N;i++){
       if(tk!==token)return;
-      if(i>cur||i===0&&cur===0&&prog===0){ if(i>0)await travel(i,tk); }
+      if(prog<i-1e-3)await tween(prog,i,tk);
       if(tk!==token)return;
       await arrive(i,tk,i===N-1?6000:PLACES[i].type==='poi'?7500:9500);
     }
@@ -907,19 +920,20 @@ function goTo(i){
 playBtn.onclick=()=>{
   if(playing){pause();return;}
   if(prog>=N-1-1e-6){cur=0;setProgress(0);playFrom(0);return;}
-  playFrom(cur===0&&cardIdx<0&&prog<1e-6?0:cur+1);
+  playFrom(Math.floor(prog+1e-3)+1);
 };
-$('#prev').onclick=()=>moveTo((navTarget!==null?navTarget:Math.ceil(prog-1e-6))-1);
-$('#next').onclick=()=>moveTo((navTarget!==null?navTarget:Math.floor(prog+1e-6))+1);
+$('#prev').onclick=()=>goTo(Math.ceil(prog-1e-6)-1);
+$('#next').onclick=()=>goTo(Math.floor(prog+1e-6)+1);
 rng.addEventListener('input',()=>{pause();closeCard();cur=Math.round(rng.value/100);setProgress(rng.value/100);const pos=posAt(prog);map.jumpTo({center:pos,padding:{top:0,left:0,right:0,bottom:0}});});
-rng.addEventListener('change',()=>{moveTo(Math.round(rng.value/100));});
+rng.addEventListener('change',()=>{goTo(Math.round(rng.value/100));});
 document.addEventListener('keydown',e=>{
   if(e.target.tagName==='INPUT'&&e.key!==' ')return;
   if(e.key===' '){e.preventDefault();playBtn.click();}
   else if(e.key==='ArrowRight')$('#next').click();
   else if(e.key==='ArrowLeft')$('#prev').click();
   else if(e.key==='m'||e.key==='M')$('#snd').click();
-  else if(e.key==='Escape'){$('#lb').classList.remove('on');$('#close').click();}
+  else if(e.key==='Escape'){if($('#lb').classList.contains('on'))$('#lb').classList.remove('on');else $('#close').click();}
+  else if(e.key==='Backspace'&&stepBack())e.preventDefault();
 });
 
 /* ============================================================
